@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المدير - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="خدمات اونلاين/styles.css">
+    <style>
+        .dashboard-content {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .nav-item:hover {
+            background: var(--light);
+        }
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .order-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: var(--light);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-pending { background: var(--warning); color: #212529; }
+        .status-progress { background: #17a2b8; color: white; }
+        .status-completed { background: var(--success); color: white; }
+        .status-dispute { background: var(--danger); color: white; }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            margin: 0 0.25rem;
+        }
+        .editor-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: white;
+        }
+        .specialization-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+        .chart-container {
+            height: 300px;
+            background: var(--light);
+            border-radius: 12px;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="admin-login.html" class="nav-link">دخول المدير</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>لوحة تحكم المدير</h2>
+                <div>
+                    <span>مرحباً: <strong id="admin-name"></strong></span>
+                    <button class="btn" onclick="logout()" style="margin-left: 1rem; background: var(--danger);">تسجيل خروج</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <div class="nav-item active" onclick="showSection('overview')">نظرة عامة</div>
+                <div class="nav-item" onclick="showSection('orders')">جميع الطلبات</div>
+                <div class="nav-item" onclick="showSection('editors')">المحررين</div>
+                <div class="nav-item" onclick="showSection('disputes')">الشكاوى</div>
+                <div class="nav-item" onclick="showSection('analytics')">التحليلات</div>
+                <div class="nav-item" onclick="showSection('settings')">الإعدادات</div>
+            </div>
+            
+            <div class="main-content">
+                <!-- نظرة عامة -->
+                <div id="overview-section">
+                    <h3>📊 نظرة عامة</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
+                        <div class="stats-card">
+                            <h4>إجمالي الطلبات</h4>
+                            <div class="stats-number" id="total-orders">0</div>
+                            <p>طلب</p>
+                        </div>
+                        
+                        <div class="stats-card" style="background: linear-gradient(135deg, var(--success), #047857);">
+                            <h4>الطلبات المكتملة</h4>
+                            <div class="stats-number" id="completed-orders">0</div>
+                            <p>طلب</p>
+                        </div>
+                        
+                        <div class="stats-card" style="background: linear-gradient(135deg, var(--warning), #b45309);">
+                            <h4>الطلبات قيد التنفيذ</h4>
+                            <div class="stats-number" id="progress-orders">0</div>
+                            <p>طلب</p>
+                        </div>
+                        
+                        <div class="stats-card" style="background: linear-gradient(135deg, var(--primary), #1e40af);">
+                            <h4>إجمالي الأرباح</h4>
+                            <div class="stats-number" id="total-earnings">0</div>
+                            <p>جنيه</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>أحدث الطلبات</h4>
+                        <div id="recent-orders">
+                            <!-- الطلبات الحديثة تظهر هنا -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- جميع الطلبات -->
+                <div id="orders-section" style="display: none;">
+                    <h3>📋 جميع الطلبات</h3>
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <select id="filter-status" class="form-control" style="width: auto;" onchange="filterOrders()">
+                            <option value="all">جميع الحالات</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="progress">قيد التنفيذ</option>
+                            <option value="completed">مكتمل</option>
+                            <option value="dispute">شكوى</option>
+                        </select>
+                        <select id="filter-category" class="form-control" style="width: auto;" onchange="filterOrders()">
+                            <option value="all">جميع التخصصات</option>
+                            <option value="video">فيديو</option>
+                            <option value="photo">صور</option>
+                            <option value="translation">ترجمة</option>
+                        </select>
+                    </div>
+                    <div id="all-orders">
+                        <!-- جميع الطلبات تظهر هنا -->
+                    </div>
+                </div>
+                
+                <!-- المحررون -->
+                <div id="editors-section" style="display: none;">
+                    <h3>👨‍💻 المحررون</h3>
+                    <div id="editors-list">
+                        <!-- قائمة المحررين تظهر هنا -->
+                    </div>
+                </div>
+                
+                <!-- الشكاوى -->
+                <div id="disputes-section" style="display: none;">
+                    <h3>⚠️ الشكاوى والنزاعات</h3>
+                    <div id="disputes-list">
+                        <!-- قائمة الشكاوى تظهر هنا -->
+                    </div>
+                </div>
+                
+                <!-- التحليلات -->
+                <div id="analytics-section" style="display: none;">
+                    <h3>📈 التحليلات</h3>
+                    <div class="chart-container">
+                        <div>📊 مخطط التحليلات (سيتم إضافته لاحقاً)</div>
+                    </div>
+                    <div class="card">
+                        <h4>إحصائيات الأداء</h4>
+                        <div id="performance-stats">
+                            <!-- إحصائيات الأداء تظهر هنا -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- الإعدادات -->
+                <div id="settings-section" style="display: none;">
+                    <h3>⚙️ الإعدادات</h3>
+                    <div class="card">
+                        <h4>إدارة المحررين</h4>
+                        <div class="form-group">
+                            <label class="form-label">إضافة محرر جديد</label>
+                            <input type="text" id="new-editor-name" class="form-control" placeholder="اسم المحرر">
+                        </div>
+                        <div class="form-group">
+                            <select id="new-editor-specialization" class="form-control">
+                                <option value="video">تعديل الفيديو</option>
+                                <option value="photo">تعديل الصور</option>
+                                <option value="translation">الترجمة</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="addNewEditor()">إضافة محرر</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>إعدادات الموقع</h4>
+                        <div class="form-group">
+                            <label class="form-label">رسوم الخدمة (%)</label>
+                            <input type="number" id="service-fee" class="form-control" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">أوقات العمل</label>
+                            <input type="text" id="working-hours" class="form-control" value="9:00 صباحاً - 11:00 مساءً">
+                        </div>
+                        <button class="btn" onclick="saveSettings()">حفظ الإعدادات</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        // التحقق من تسجيل الدخول
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn');
+            const currentAdmin = localStorage.getItem('currentAdmin');
+            
+            if (!isLoggedIn || !currentAdmin) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            
+            return true;
+        }
+        
+        if (!checkAuth()) {
+            return;
+        }
+        
+        // عرض اسم المدير
+        const currentAdmin = localStorage.getItem('currentAdmin');
+        document.getElementById('admin-name').textContent = currentAdmin;
+        
+        // تسجيل الخروج
+        function logout() {
+            localStorage.removeItem('adminLoggedIn');
+            localStorage.removeItem('currentAdmin');
+            window.location.href = 'admin-login.html';
+        }
+        
+        // تبديل الأقسام
+        function showSection(section) {
+            document.getElementById('overview-section').style.display = 'none';
+            document.getElementById('orders-section').style.display = 'none';
+            document.getElementById('editors-section').style.display = 'none';
+            document.getElementById('disputes-section').style.display = 'none';
+            document.getElementById('analytics-section').style.display = 'none';
+            document.getElementById('settings-section').style.display = 'none';
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(section + '-section').style.display = 'block';
+            event.target.classList.add('active');
+        }
+        
+        // بيانات المحررين
+        const editorsData = {
+            'mohamed': {
+                name: 'محمد أحمد',
+                specialization: 'video',
+                specializationName: 'تعديل الفيديو',
+                rating: 4.8,
+                projects: 67,
+                earnings: 18500,
+                status: 'online'
+            },
+            'ahmed': {
+                name: 'أحمد محمود',
+                specialization: 'photo',
+                specializationName: 'تعديل الصور',
+                rating: 4.9,
+                projects: 89,
+                earnings: 15200,
+                status: 'offline'
+            },
+            'sara': {
+                name: 'سارة علي',
+                specialization: 'translation',
+                specializationName: 'الترجمة',
+                rating: 4.7,
+                projects: 123,
+                earnings: 9800,
+                status: 'online'
+            }
+        };
+        
+        // عرض الإحصائيات
+        function displayStats() {
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            
+            // إحصائيات الطلبات
+            document.getElementById('total-orders').textContent = allOrders.length;
+            
+            const completedOrders = allOrders.filter(order => order.status === 'completed').length;
+            document.getElementById('completed-orders').textContent = completedOrders;
+            
+            const progressOrders = allOrders.filter(order => order.status === 'progress').length;
+            document.getElementById('progress-orders').textContent = progressOrders;
+            
+            // إجمالي الأرباح
+            let totalEarnings = 0;
+            allOrders.forEach(order => {
+                if (order.status === 'completed') {
+                    totalEarnings += parseInt(order.price) || 0;
+                }
+            });
+            document.getElementById('total-earnings').textContent = totalEarnings;
+        }
+        
+        // عرض أحدث الطلبات
+        function displayRecentOrders() {
+            const container = document.getElementById('recent-orders');
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            
+            // ترتيب الطلبات حسب التاريخ (الأحدث أولاً)
+            const sortedOrders = [...allOrders].sort((a, b) => 
+                new Date(b.orderDate) - new Date(a.orderDate)
+            ).slice(0, 5);
+            
+            if (sortedOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات حالياً</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            sortedOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.serviceName}</h4>
+                        <span class="status-badge status-${order.status}">${getStatusName(order.status)}</span>
+                    </div>
+                    <p><strong>العميل:</strong> ${order.customerName}</p>
+                    <p><strong>السعر:</strong> ${order.servicePrice} جنيه</p>
+                    <p><strong>التاريخ:</strong> ${new Date(order.orderDate).toLocaleDateString('ar-EG')}</p>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        // عرض جميع الطلبات
+        function displayAllOrders() {
+            const container = document.getElementById('all-orders');
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            
+            if (allOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات حالياً</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            allOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.serviceName}</h4>
+                        <span class="status-badge status-${order.status}">${getStatusName(order.status)}</span>
+                    </div>
+                    <p><strong>العميل:</strong> ${order.customerName}</p>
+                    <p><strong>البريد:</strong> ${order.customerEmail}</p>
+                    <p><strong>الهاتف:</strong> ${order.customerPhone}</p>
+                    <p><strong>السعر:</strong> ${order.servicePrice} جنيه</p>
+                    <p><strong>التخصص:</strong> ${getCategoryName(order.serviceCategory)}</p>
+                    <p><strong>التفاصيل:</strong> ${order.orderDetails}</p>
+                    <p><strong>التاريخ:</strong> ${new Date(order.orderDate).toLocaleString('ar-EG')}</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="viewOrderDetails('${order.orderId}')">عرض التفاصيل</button>
+                        <button class="btn btn-sm" style="background: var(--danger);" onclick="deleteOrder('${order.orderId}')">حذف الطلب</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        // تصفية الطلبات
+        function filterOrders() {
+            const statusFilter = document.getElementById('filter-status').value;
+            const categoryFilter = document.getElementById('filter-category').value;
+            const container = document.getElementById('all-orders');
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            
+            let filteredOrders = allOrders;
+            
+            if (statusFilter !== 'all') {
+                filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+            }
+            
+            if (categoryFilter !== 'all') {
+                filteredOrders = filteredOrders.filter(order => order.serviceCategory === categoryFilter);
+            }
+            
+            if (filteredOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات مطابقة للبحث</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            filteredOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.serviceName}</h4>
+                        <span class="status-badge status-${order.status}">${getStatusName(order.status)}</span>
+                    </div>
+                    <p><strong>العميل:</strong> ${order.customerName}</p>
+                    <p><strong>البريد:</strong> ${order.customerEmail}</p>
+                    <p><strong>الهاتف:</strong> ${order.customerPhone}</p>
+                    <p><strong>السعر:</strong> ${order.servicePrice} جنيه</p>
+                    <p><strong>التخصص:</strong> ${getCategoryName(order.serviceCategory)}</p>
+                    <p><strong>التفاصيل:</strong> ${order.orderDetails}</p>
+                    <p><strong>التاريخ:</strong> ${new Date(order.orderDate).toLocaleString('ar-EG')}</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="viewOrderDetails('${order.orderId}')">عرض التفاصيل</button>
+                        <button class="btn btn-sm" style="background: var(--danger);" onclick="deleteOrder('${order.orderId}')">حذف الطلب</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        // عرض قائمة المحررين
+        function displayEditors() {
+            const container = document.getElementById('editors-list');
+            
+            container.innerHTML = '';
+            for (const [key, editor] of Object.entries(editorsData)) {
+                const editorCard = document.createElement('div');
+                editorCard.className = 'editor-card';
+                editorCard.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4>${editor.name}</h4>
+                            <span class="specialization-tag">${editor.specializationName}</span>
+                            <p><strong>التقييم:</strong> ⭐${editor.rating} (${editor.projects} مشروع)</p>
+                            <p><strong>الأرباح:</strong> ${editor.earnings} جنيه</p>
+                        </div>
+                        <div>
+                            <span style="color: ${editor.status === 'online' ? 'var(--success)' : 'var(--danger)'};">
+                                ${editor.status === 'online' ? '🟢 متصل' : '🔴 غير متصل'}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-sm" onclick="editEditor('${key}')">تعديل</button>
+                        <button class="btn btn-sm" style="background: var(--danger);" onclick="removeEditor('${key}')">إزالة</button>
+                    </div>
+                `;
+                container.appendChild(editorCard);
+            }
+        }
+        
+        // عرض الشكاوى
+        function displayDisputes() {
+            const container = document.getElementById('disputes-list');
+            const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+            const disputeOrders = allOrders.filter(order => order.status === 'dispute');
+            
+            if (disputeOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد شكاوى حالياً</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            disputeOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.serviceName}</h4>
+                        <span class="status-badge status-dispute">شكوى</span>
+                    </div>
+                    <p><strong>العميل:</strong> ${order.customerName}</p>
+                    <p><strong>المحرر:</strong> ${getEditorName(order.serviceCategory)}</p>
+                    <p><strong>السعر:</strong> ${order.servicePrice} جنيه</p>
+                    <p><strong>سبب الشكوى:</strong> ${order.disputeReason || 'غير محدد'}</p>
+                    <p><strong>التاريخ:</strong> ${new Date(order.orderDate).toLocaleString('ar-EG')}</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-sm" style="background: var(--success);" onclick="resolveDispute('${order.orderId}')">حل الشكوى</button>
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="contactParties('${order.orderId}')">الاتصال بالأطراف</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        // دوال مساعدة
+        function getStatusName(status) {
+            const statuses = {
+                'pending': 'قيد الانتظار',
+                'progress': 'قيد التنفيذ',
+                'completed': 'مكتمل',
+                'dispute': 'شكوى'
+            };
+            return statuses[status] || status;
+        }
+        
+        function getCategoryName(category) {
+            const categories = {
+                'video': 'تعديل الفيديو',
+                'photo': 'تعديل الصور',
+                'translation': 'الترجمة'
+            };
+            return categories[category] || category;
+        }
+        
+        function getEditorName(category) {
+            const editors = {
+                'video': 'محمد أحمد',
+                'photo': 'أحمد محمود',
+                'translation': 'سارة علي'
+            };
+            return editors[category] || 'غير محدد';
+        }
+        
+        // دوال الإجراءات
+        function viewOrderDetails(orderId) {
+            alert('عرض تفاصيل الطلب: ' + orderId + '\n(سيتم إضافتها لاحقاً)');
+        }
+        
+        function deleteOrder(orderId) {
+            if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
+                let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+                allOrders = allOrders.filter(order => order.orderId !== orderId);
+                localStorage.setItem('allOrders', JSON.stringify(allOrders));
+                displayAllOrders();
+                displayStats();
+                alert('تم حذف الطلب بنجاح');
+            }
+        }
+        
+        function resolveDispute(orderId) {
+            if (confirm('هل أنت متأكد من حل هذه الشكوى؟')) {
+                let allOrders = JSON.parse(localStorage.getItem('allOrders')) || [];
+                allOrders = allOrders.map(order => {
+                    if (order.orderId === orderId) {
+                        return {...order, status: 'completed'};
+                    }
+                    return order;
+                });
+                localStorage.setItem('allOrders', JSON.stringify(allOrders));
+                displayDisputes();
+                displayStats();
+                alert('تم حل الشكوى بنجاح');
+            }
+        }
+        
+        function contactParties(orderId) {
+            alert('سيتم فتح نافذة للتواصل مع الأطراف المعنية');
+        }
+        
+        function addNewEditor() {
+            const name = document.getElementById('new-editor-name').value;
+            const specialization = document.getElementById('new-editor-specialization').value;
+            
+            if (name) {
+                alert('تم إضافة المحرر الجديد: ' + name + '\n(سيتم تطبيق التحديثات لاحقاً)');
+                document.getElementById('new-editor-name').value = '';
+            } else {
+                alert('من فضلك أدخل اسم المحرر');
+            }
+        }
+        
+        function saveSettings() {
+            const fee = document.getElementById('service-fee').value;
+            const hours = document.getElementById('working-hours').value;
+            alert('تم حفظ الإعدادات:\nرسوم الخدمة: ' + fee + '%\nأوقات العمل: ' + hours);
+        }
+        
+        function editEditor(editorId) {
+            alert('تعديل بيانات المحرر: ' + editorsData[editorId].name);
+        }
+        
+        function removeEditor(editorId) {
+            if (confirm('هل أنت متأكد من إزالة هذا المحرر؟')) {
+                alert('تم إزالة المحرر: ' + editorsData[editorId].name);
+            }
+        }
+        
+        // عرض البيانات عند تحميل الصفحة
+        displayStats();
+        displayRecentOrders();
+        displayAllOrders();
+        displayEditors();
+        displayDisputes();
+    </script>
+</body>
+</html>

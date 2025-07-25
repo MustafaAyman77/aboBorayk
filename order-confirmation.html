@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تم إرسال الطلب - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="mt-4">
+            <div class="card text-center">
+                <div style="font-size: 4rem; color: var(--success); margin-bottom: 1rem;">✅</div>
+                <h2 class="card-title">تم إرسال طلبك بنجاح!</h2>
+                
+                <div class="alert alert-success" style="margin: 2rem 0;">
+                    <h3>رقم الطلب: <strong id="order-id"></strong></h3>
+                    <p>تم إرسال طلبك وسيتم التواصل معك خلال 24 ساعة لتأكيد التفاصيل والسعر النهائي.</p>
+                </div>
+
+                <div class="card" style="text-align: right; background: var(--light);">
+                    <h3>📋 معلومات الطلب:</h3>
+                    <div id="order-summary"></div>
+                </div>
+
+                <div class="card" style="text-align: right; background: var(--light); margin-top: 2rem;">
+                    <h3>📞 طرق التواصل:</h3>
+                    <p>📱 واتساب: 010XXXXXXXX</p>
+                    <p>📧 البريد: info@freelancer.com</p>
+                    <p>⏰ أوقات العمل: 9 صباحاً - 11 مساءً</p>
+                </div>
+
+                <div style="margin: 2rem 0;">
+                    <a href="index.html" class="btn">🏠 الصفحة الرئيسية</a>
+                    <a href="chat.html" class="btn" style="background: var(--secondary); margin-right: 1rem;">💬 غرفة الشات</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        const orderData = JSON.parse(localStorage.getItem('currentOrder'));
+        
+        if (orderData) {
+            document.getElementById('order-id').textContent = orderData.orderId;
+            
+            document.getElementById('order-summary').innerHTML = `
+                <p><strong>الخدمة:</strong> ${orderData.serviceName}</p>
+                <p><strong>السعر المبدئي:</strong> ${orderData.servicePrice} جنيه</p>
+                <p><strong>الاسم:</strong> ${orderData.customerName}</p>
+                <p><strong>البريد:</strong> ${orderData.customerEmail}</p>
+                <p><strong>الهاتف:</strong> ${orderData.customerPhone}</p>
+                <p><strong>التفاصيل:</strong> ${orderData.orderDetails}</p>
+                <p><strong>وقت التسليم:</strong> ${orderData.deliveryTime} ساعة</p>
+            `;
+        }
+    </script>
+</body>
+</html>

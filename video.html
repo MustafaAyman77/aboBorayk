@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل الفيديو - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="mt-4">
+            <h1>🎥 خدمات تعديل الفيديو</h1>
+            <a href="categories.html" class="btn" style="margin-bottom: 2rem;">⬅️ رجوع للتخصصات</a>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h3 class="card-title">مونتاج بسيط</h3>
+                        <p class="text-muted">تجميع مشاهد + موسيقى + مؤثرات بسيطة</p>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--success); margin-bottom: 1rem;">100 جنيه</div>
+                        <button class="btn" onclick="orderService('مونتاج بسيط', 100)">اطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h3 class="card-title">مونتاج احترافي</h3>
+                        <p class="text-muted">Color grading + مؤثرات متقدمة + motion graphics</p>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--success); margin-bottom: 1rem;">250 جنيه</div>
+                        <button class="btn" onclick="orderService('مونتاج احترافي', 250)">اطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h3 class="card-title">تعديل فيديو TikTok</h3>
+                        <p class="text-muted">قص + مؤثرات + نصوص جذابة</p>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--success); margin-bottom: 1rem;">70 جنيه</div>
+                        <button class="btn" onclick="orderService('تعديل فيديو TikTok', 70)">اطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        function orderService(serviceName, price) {
+            localStorage.setItem('selectedService', serviceName);
+            localStorage.setItem('servicePrice', price);
+            window.location.href = 'order.html';
+        }
+    </script>
+</body>
+</html>

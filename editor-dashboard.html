@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dashboard-content {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .main-content {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .nav-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        .nav-item:hover {
+            background: var(--light);
+        }
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        .order-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            background: var(--light);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-pending {
+            background: var(--warning);
+            color: #212529;
+        }
+        .status-progress {
+            background: #17a2b8;
+            color: white;
+        }
+        .status-completed {
+            background: var(--success);
+            color: white;
+        }
+        .status-dispute {
+            background: var(--danger);
+            color: white;
+        }
+        .btn-group {
+            margin-top: 1rem;
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            margin: 0 0.25rem;
+        }
+        .dispute-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .specialization-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>لوحة تحكم المحرر</h2>
+                <div>
+                    <span>مرحباً: <strong id="editor-name"></strong></span>
+                    <button class="btn" onclick="logout()" style="margin-left: 1rem; background: var(--danger);">تسجيل خروج</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <div class="nav-item active" onclick="showSection('orders')">الطلبات الجديدة</div>
+                <div class="nav-item" onclick="showSection('progress')">قيد التنفيذ</div>
+                <div class="nav-item" onclick="showSection('completed')">المكتملة</div>
+                <div class="nav-item" onclick="showSection('disputes')">الشكاوى</div>
+                <div class="nav-item" onclick="showSection('profile')">الملف الشخصي</div>
+            </div>
+            
+            <div class="main-content">
+                <div id="orders-section">
+                    <h3>📋 الطلبات الجديدة</h3>
+                    <div id="new-orders">
+                        <!-- الطلبات الجديدة تظهر هنا -->
+                    </div>
+                </div>
+                
+                <div id="progress-section" style="display: none;">
+                    <h3>⚙️ قيد التنفيذ</h3>
+                    <div id="progress-orders">
+                        <!-- الطلبات قيد التنفيذ تظهر هنا -->
+                    </div>
+                </div>
+                
+                <div id="completed-section" style="display: none;">
+                    <h3>✅ المكتملة</h3>
+                    <div id="completed-orders">
+                        <!-- الطلبات المكتملة تظهر هنا -->
+                    </div>
+                </div>
+                
+                <div id="disputes-section" style="display: none;">
+                    <h3>⚠️ الشكاوى والنزاعات</h3>
+                    <div id="dispute-orders">
+                        <!-- الشكاوى تظهر هنا -->
+                    </div>
+                </div>
+                
+                <div id="profile-section" style="display: none;">
+                    <h3>👤 الملف الشخصي</h3>
+                    <div class="order-card">
+                        <h4>معلومات المحرر</h4>
+                        <p><strong>الاسم:</strong> <span id="profile-name"></span></p>
+                        <p><strong>التخصص:</strong> <span id="editor-specialization"></span></p>
+                        <p><strong>التقييم:</strong> ⭐⭐⭐⭐⭐ (5.0)</p>
+                        <p><strong>عدد المشاريع:</strong> <span id="projects-count">45</span> مشروع</p>
+                        <p><strong>الأرباح الكلية:</strong> <span id="total-earnings">12,500</span> جنيه</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        // بيانات المحررين مع تخصصاتهم
+        const editorsData = {
+            'mohamed': {
+                name: 'محمد أحمد',
+                specialization: 'video',
+                specializationName: 'تعديل الفيديو',
+                rating: 4.8,
+                projects: 67,
+                earnings: 18500
+            },
+            'ahmed': {
+                name: 'أحمد محمود',
+                specialization: 'photo',
+                specializationName: 'تعديل الصور',
+                rating: 4.9,
+                projects: 89,
+                earnings: 15200
+            },
+            'sara': {
+                name: 'سارة علي',
+                specialization: 'translation',
+                specializationName: 'الترجمة',
+                rating: 4.7,
+                projects: 123,
+                earnings: 9800
+            }
+        };
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('editorLoggedIn');
+            const currentEditor = localStorage.getItem('currentEditor');
+            
+            if (!isLoggedIn || !currentEditor) {
+                window.location.href = 'editor-login.html';
+                return false;
+            }
+            
+            return true;
+        }
+        
+        if (!checkAuth()) {
+            return;
+        }
+        
+        const currentEditor = localStorage.getItem('currentEditor');
+        const editorInfo = editorsData[currentEditor] || editorsData['mohamed'];
+        
+        document.getElementById('editor-name').textContent = editorInfo.name;
+        document.getElementById('profile-name').textContent = editorInfo.name;
+        document.getElementById('editor-specialization').textContent = editorInfo.specializationName;
+        document.getElementById('projects-count').textContent = editorInfo.projects;
+        document.getElementById('total-earnings').textContent = editorInfo.earnings;
+        
+        function logout() {
+            localStorage.removeItem('currentEditor');
+            localStorage.removeItem('editorLoggedIn');
+            window.location.href = 'editor-login.html';
+        }
+        
+        function showSection(section) {
+            document.getElementById('orders-section').style.display = 'none';
+            document.getElementById('progress-section').style.display = 'none';
+            document.getElementById('completed-section').style.display = 'none';
+            document.getElementById('disputes-section').style.display = 'none';
+            document.getElementById('profile-section').style.display = 'none';
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(section + '-section').style.display = 'block';
+            event.target.classList.add('active');
+        }
+        
+        // بيانات الطلبات مع ربطها بالتخصصات
+        const allOrders = JSON.parse(localStorage.getItem('allOrders')) || [
+            {
+                id: 'ORD-001',
+                customer: 'محمد علي',
+                service: 'مونتاج فيديو ترويجي',
+                specialization: 'video',
+                price: 200,
+                status: 'pending',
+                date: '2024-01-15',
+                details: 'فيديو ترويجي لمنتج جديد، المدة 2-3 دقائق'
+            },
+            {
+                id: 'ORD-002',
+                customer: 'سارة أحمد',
+                service: 'تعديل صور بروفايل',
+                specialization: 'photo',
+                price: 80,
+                status: 'pending',
+                date: '2024-01-14',
+                details: 'تعديل 5 صور بروفايل شخصي'
+            },
+            {
+                id: 'ORD-003',
+                customer: 'أحمد محمود',
+                service: 'ترجمة مستندات',
+                specialization: 'translation',
+                price: 150,
+                status: 'progress',
+                date: '2024-01-10',
+                details: 'ترجمة 10 صفحات من الإنجليزي للعربي'
+            },
+            {
+                id: 'ORD-004',
+                customer: 'محمود حسن',
+                service: 'تعديل فيديو TikTok',
+                specialization: 'video',
+                price: 100,
+                status: 'completed',
+                date: '2024-01-08',
+                details: 'تعديل فيديو قصير مع مؤثرات'
+            }
+        ];
+        
+        function getEditorOrders() {
+            const currentEditor = localStorage.getItem('currentEditor');
+            const editorInfo = editorsData[currentEditor];
+            
+            if (!editorInfo) return allOrders;
+            
+            // تصفية الطلبات حسب تخصص المحرر
+            return allOrders.filter(order => order.specialization === editorInfo.specialization);
+        }
+        
+        function displayNewOrders() {
+            const container = document.getElementById('new-orders');
+            const editorOrders = getEditorOrders();
+            const newOrders = editorOrders.filter(order => order.status === 'pending');
+            
+            if (newOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات جديدة في تخصصك</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            newOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.service}</h4>
+                        <span class="status-badge status-pending">جديد</span>
+                    </div>
+                    <span class="specialization-tag">${getSpecializationName(order.specialization)}</span>
+                    <p><strong>العميل:</strong> ${order.customer}</p>
+                    <p><strong>السعر المقترح:</strong> ${order.price} جنيه</p>
+                    <p><strong>التفاصيل:</strong> ${order.details}</p>
+                    <p><strong>التاريخ:</strong> ${order.date}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-sm" onclick="acceptOrder('${order.id}')">قبول الطلب</button>
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="chatWithCustomer('${order.id}')">مراسلة العميل</button>
+                        <button class="btn btn-sm" style="background: var(--danger);" onclick="rejectOrder('${order.id}')">رفض الطلب</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        function displayProgressOrders() {
+            const container = document.getElementById('progress-orders');
+            const editorOrders = getEditorOrders();
+            const progressOrders = editorOrders.filter(order => order.status === 'progress');
+            
+            if (progressOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات قيد التنفيذ في تخصصك</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            progressOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.service}</h4>
+                        <span class="status-badge status-progress">قيد التنفيذ</span>
+                    </div>
+                    <span class="specialization-tag">${getSpecializationName(order.specialization)}</span>
+                    <p><strong>العميل:</strong> ${order.customer}</p>
+                    <p><strong>السعر:</strong> ${order.price} جنيه</p>
+                    <p><strong>التفاصيل:</strong> ${order.details}</p>
+                    <p><strong>التاريخ:</strong> ${order.date}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-sm" style="background: var(--success);" onclick="completeOrder('${order.id}')">إتمام المشروع</button>
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="chatWithCustomer('${order.id}')">مراسلة العميل</button>
+                        <button class="btn btn-sm" style="background: var(--warning);" onclick="requestChanges('${order.id}')">طلب تعديلات</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        function displayCompletedOrders() {
+            const container = document.getElementById('completed-orders');
+            const editorOrders = getEditorOrders();
+            const completedOrders = editorOrders.filter(order => order.status === 'completed');
+            
+            if (completedOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد طلبات مكتملة في تخصصك</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            completedOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.service}</h4>
+                        <span class="status-badge status-completed">مكتمل</span>
+                    </div>
+                    <span class="specialization-tag">${getSpecializationName(order.specialization)}</span>
+                    <p><strong>العميل:</strong> ${order.customer}</p>
+                    <p><strong>السعر:</strong> ${order.price} جنيه</p>
+                    <p><strong>التفاصيل:</strong> ${order.details}</p>
+                    <p><strong>التاريخ:</strong> ${order.date}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="chatWithCustomer('${order.id}')">مراسلة العميل</button>
+                        <button class="btn btn-sm" style="background: var(--danger);" onclick="openDispute('${order.id}')">فتح شكوى</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        function displayDisputeOrders() {
+            const container = document.getElementById('dispute-orders');
+            const editorOrders = getEditorOrders();
+            const disputeOrders = editorOrders.filter(order => order.status === 'dispute');
+            
+            if (disputeOrders.length === 0) {
+                container.innerHTML = '<p>لا توجد شكاوى في تخصصك</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            disputeOrders.forEach(order => {
+                const orderCard = document.createElement('div');
+                orderCard.className = 'order-card';
+                orderCard.innerHTML = `
+                    <div class="order-header">
+                        <h4>${order.service}</h4>
+                        <span class="status-badge status-dispute">شكوى</span>
+                    </div>
+                    <span class="specialization-tag">${getSpecializationName(order.specialization)}</span>
+                    <p><strong>العميل:</strong> ${order.customer}</p>
+                    <p><strong>السعر:</strong> ${order.price} جنيه</p>
+                    <p><strong>التفاصيل:</strong> ${order.details}</p>
+                    <div class="dispute-section">
+                        <strong>سبب الشكوى:</strong> ${order.disputeReason || 'غير محدد'}
+                    </div>
+                    <p><strong>التاريخ:</strong> ${order.date}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-sm" style="background: var(--success);" onclick="resolveDispute('${order.id}')">حل الشكوى</button>
+                        <button class="btn btn-sm" style="background: var(--secondary);" onclick="chatWithCustomer('${order.id}')">مراسلة العميل</button>
+                    </div>
+                `;
+                container.appendChild(orderCard);
+            });
+        }
+        
+        function getSpecializationName(spec) {
+            const specs = {
+                'video': 'تعديل الفيديو',
+                'photo': 'تعديل الصور',
+                'translation': 'الترجمة'
+            };
+            return specs[spec] || spec;
+        }
+        
+        function acceptOrder(orderId) {
+            alert('تم قبول الطلب: ' + orderId + '\nسيتم التواصل مع العميل لتأكيد التفاصيل والسعر النهائي.');
+            // هنا يمكن تحديث حالة الطلب في localStorage
+        }
+        
+        function rejectOrder(orderId) {
+            if (confirm('هل أنت متأكد من رفض هذا الطلب؟')) {
+                alert('تم رفض الطلب: ' + orderId);
+                // هنا يمكن تحديث حالة الطلب في localStorage
+            }
+        }
+        
+        function completeOrder(orderId) {
+            if (confirm('هل أنت متأكد من إتمام هذا المشروع؟')) {
+                alert('تم إتمام المشروع: ' + orderId + '\nالعميل سيتم إعلامه للدفع والاستلام.');
+                // هنا يمكن تحديث حالة الطلب في localStorage
+            }
+        }
+        
+        function requestChanges(orderId) {
+            const changes = prompt('ما هي التعديلات المطلوبة؟');
+            if (changes) {
+                alert('تم طلب التعديلات من العميل.');
+                // هنا يمكن تحديث حالة الطلب في localStorage
+            }
+        }
+        
+        function openDispute(orderId) {
+            const reason = prompt('ما هو سبب الشكوى؟');
+            if (reason) {
+                alert('تم فتح شكوى للطلب: ' + orderId + '\nسيتم مراجعة الأمر من الإدارة.');
+                // هنا يمكن تحديث حالة الطلب في localStorage
+            }
+        }
+        
+        function resolveDispute(orderId) {
+            if (confirm('هل أنت متأكد من حل هذه الشكوى؟')) {
+                alert('تم حل الشكوى: ' + orderId);
+                // هنا يمكن تحديث حالة الطلب في localStorage
+            }
+        }
+        
+        function chatWithCustomer(orderId) {
+            window.open('chat.html', '_blank');
+        }
+        
+        // عرض البيانات عند تحميل الصفحة
+        displayNewOrders();
+        displayProgressOrders();
+        displayCompletedOrders();
+        displayDisputeOrders();
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدفع - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="mt-4">
+            <h1 class="text-center">💳 عملية الدفع</h1>
+            
+            <div class="card text-center">
+                <h2 class="card-title">تأكيد الدفع</h2>
+                
+                <div style="font-size: 2rem; color: var(--success); font-weight: bold; margin: 2rem 0;">
+                    <span id="payment-amount">0</span> جنيه
+                </div>
+                
+                <div class="card" style="background: var(--light); text-align: right;">
+                    <h3>طرق الدفع المتاحة:</h3>
+                    <p>📱 فودافون كاش: 010XXXXXXXX</p>
+                    <p>💳 بطاقة ائتمان (فيزا/ماستركارد)</p>
+                    <p>🏦 تحويل بنكي</p>
+                </div>
+
+                <div id="success-message" class="alert alert-success" style="display: none; margin: 2rem 0;">
+                    <h3>✅ تم تأكيد الدفع بنجاح!</h3>
+                    <p>رقم الطلب: <strong id="order-id"></strong></p>
+                    <p>سيتم التواصل معك خلال 24 ساعة لبدء المشروع</p>
+                    <button class="btn btn-success" onclick="goToChat()" style="margin-top: 1rem;">اذهب لغرفة الشات</button>
+                </div>
+
+                <button class="btn btn-block" onclick="confirmPayment()" style="margin-top: 2rem;">
+                    ✅ لقد قمت بالدفع
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        const orderData = JSON.parse(localStorage.getItem('currentOrder'));
+        
+        if (orderData) {
+            document.getElementById('payment-amount').textContent = orderData.servicePrice;
+        }
+
+        function confirmPayment() {
+            const updatedOrder = {
+                ...orderData,
+                paymentStatus: 'paid',
+                paymentDate: new Date().toISOString()
+            };
+            
+            localStorage.setItem('currentOrder', JSON.stringify(updatedOrder));
+            
+            document.getElementById('order-id').textContent = updatedOrder.orderId;
+            document.getElementById('success-message').style.display = 'block';
+            
+            event.target.style.display = 'none';
+        }
+
+        function goToChat() {
+            window.location.href = 'chat.html';
+        }
+    </script>
+</body>
+</html>

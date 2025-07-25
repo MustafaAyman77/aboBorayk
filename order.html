@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأكيد الطلب - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="mt-4">
+            <h1 class="text-center">تأكيد طلبك</h1>
+            
+            <div class="card">
+                <div class="text-center" style="background: var(--light); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3>الخدمة: <span id="service-name">خدمة غير محددة</span></h3>
+                    <h3>السعر المبدئي: <span id="service-price" style="color: var(--success);">0</span> جنيه</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">اسمك الكامل *</label>
+                    <input type="text" id="customer-name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">بريدك الإلكتروني *</label>
+                    <input type="email" id="customer-email" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">رقم التليفون *</label>
+                    <input type="tel" id="customer-phone" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">تفاصيل الطلب *</label>
+                    <textarea id="order-details" class="form-control" rows="4" required placeholder="اكتب تفاصيل الطلب هنا..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">الملفات المرفقة (اختياري)</label>
+                    <input type="file" id="order-files" class="form-control" multiple accept="image/*,video/*,.pdf,.doc,.docx">
+                    <small class="text-muted">يمكنك رفع صور أو فيديوهات أو مستندات</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">وقت التسليم المطلوب</label>
+                    <select id="delivery-time" class="form-control">
+                        <option value="24">24 ساعة</option>
+                        <option value="48" selected>48 ساعة</option>
+                        <option value="72">72 ساعة</option>
+                        <option value="168">أسبوع</option>
+                    </select>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>⚠️ ملاحظة مهمة</h4>
+                    <p>بعد إرسال الطلب، سيتم التواصل معك لتأكيد التفاصيل والسعر النهائي، ثم يمكنك الدفع عند الاتفاق.</p>
+                </div>
+
+                <button class="btn btn-block" onclick="submitOrder()">
+                    📨 إرسال الطلب والتواصل مع المحرر
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        // جلب بيانات الخدمة من localStorage
+        const serviceName = localStorage.getItem('selectedService');
+        const servicePrice = localStorage.getItem('servicePrice');
+
+        // عرض البيانات
+        document.getElementById('service-name').textContent = serviceName || 'خدمة غير محددة';
+        document.getElementById('service-price').textContent = servicePrice || '0';
+
+        function submitOrder() {
+            const orderData = {
+                serviceName: serviceName || 'خدمة غير محددة',
+                servicePrice: servicePrice || '0',
+                customerName: document.getElementById('customer-name').value,
+                customerEmail: document.getElementById('customer-email').value,
+                customerPhone: document.getElementById('customer-phone').value,
+                orderDetails: document.getElementById('order-details').value,
+                deliveryTime: document.getElementById('delivery-time').value,
+                orderId: 'ORD-' + Date.now(),
+                orderDate: new Date().toISOString(),
+                status: 'pending'
+            };
+
+            // التحقق من الحقول المطلوبة
+            if (!orderData.customerName || !orderData.customerEmail || !orderData.customerPhone || !orderData.orderDetails) {
+                alert('من فضلك املأ جميع الحقول المطلوبة!');
+                return;
+            }
+
+            // تخزين الطلب
+            localStorage.setItem('currentOrder', JSON.stringify(orderData));
+            
+            // الانتقال لصفحة التأكيد
+            window.location.href = 'order-confirmation.html';
+        }
+    </script>
+</body>
+</html>

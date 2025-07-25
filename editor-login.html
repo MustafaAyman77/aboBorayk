@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دخول المحررين - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="mt-4">
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h2 class="text-center card-title">🔐 دخول المحررين</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">اسم المستخدم</label>
+                    <input type="text" id="username" class="form-control" placeholder="ادخل اسم المستخدم">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">كلمة المرور</label>
+                    <input type="password" id="password" class="form-control" placeholder="ادخل كلمة المرور">
+                </div>
+                
+                <div id="error-message" class="alert alert-error" style="display: none;">
+                    بيانات الدخول غير صحيحة!
+                </div>
+                
+                <button class="btn btn-block" onclick="loginEditor()">
+                    دخول
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        function loginEditor() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            errorMessage.style.display = 'none';
+            
+            if (validateLogin(username, password)) {
+                localStorage.setItem('currentEditor', username);
+                localStorage.setItem('editorLoggedIn', 'true');
+                alert('مرحباً بك ' + username);
+                window.location.href = 'editor-dashboard.html';
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        }
+        
+        function validateLogin(username, password) {
+            const validUsers = {
+                'mohamed': btoa('video123'),
+                'ahmed': btoa('photo456'),
+                'sara': btoa('trans789')
+            };
+            
+            if (validUsers[username]) {
+                const storedPassword = atob(validUsers[username]);
+                return password === storedPassword;
+            }
+            
+            return false;
+        }
+    </script>
+</body>
+</html>

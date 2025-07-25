@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الترجمة - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="mt-4">
+            <h1>📝 خدمات الترجمة</h1>
+            <a href="categories.html" class="btn" style="margin-bottom: 2rem;">⬅️ رجوع للتخصصات</a>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h3 class="card-title">ترجمة مستندات</h3>
+                        <p class="text-muted">ترجمة ملفات Word و PDF</p>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--success); margin-bottom: 1rem;">30 جنيه/صفحة</div>
+                        <button class="btn" onclick="orderService('ترجمة مستندات', 30)">اطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h3 class="card-title">ترجمة فيديو</h3>
+                        <p class="text-muted">ترجمة وكتابة نصوص الفيديو</p>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--success); margin-bottom: 1rem;">80 جنيه/دقيقة</div>
+                        <button class="btn" onclick="orderService('ترجمة فيديو', 80)">اطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h3 class="card-title">ترجمة مواقع</h3>
+                        <p class="text-muted">ترجمة محتوى المواقع والتطبيقات</p>
+                    </div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.2rem; font-weight: bold; color: var(--success); margin-bottom: 1rem;">200 جنيه/صفحة</div>
+                        <button class="btn" onclick="orderService('ترجمة مواقع', 200)">اطلب الآن</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        function orderService(serviceName, price) {
+            localStorage.setItem('selectedService', serviceName);
+            localStorage.setItem('servicePrice', price);
+            window.location.href = 'order.html';
+        }
+    </script>
+</body>
+</html>

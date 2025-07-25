@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غرفة الشات - موقع الفري لان싱</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .chat-container {
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+        }
+        .order-info {
+            background: var(--light);
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: white;
+        }
+        .message {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 18px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        .customer-message {
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
+        }
+        .editor-message {
+            background: var(--light);
+            color: var(--dark);
+            margin-right: auto;
+        }
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid var(--border);
+            border-radius: 0 0 8px 8px;
+        }
+        #message-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            margin-left: 0.5rem;
+        }
+        #send-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        .file-upload {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">💼 فري لانسر</a>
+                <div class="nav-links">
+                    <a href="categories.html" class="nav-link">الخدمات</a>
+                    <a href="editor-login.html" class="nav-link">دخول المحررين</a>
+                    <a href="#" class="nav-link">تواصل معنا</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mt-4">
+        <div class="card chat-container">
+            <div class="chat-header">
+                <h2>💬 غرفة الشات</h2>
+                <div>المحرر: <span class="status-indicator"></span> محمد أحمد (متصل)</div>
+            </div>
+            
+            <div class="order-info" id="order-info">
+                <!-- معلومات الطلب تظهر هنا -->
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <!-- الرسائل تظهر هنا -->
+            </div>
+            
+            <div class="file-upload">
+                <label class="btn" style="margin: 0;">
+                    <input type="file" id="file-input" style="display: none;" multiple>
+                    📎 إرفاق ملفات
+                </label>
+                <small class="text-muted" style="display: block; margin-top: 0.5rem;">يمكنك إرسال صور أو فيديوهات أو مستندات</small>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="message-input" placeholder="اكتب رسالتك هنا..." onkeypress="handleKeyPress(event)">
+                <button id="send-btn" onclick="sendMessage()">إرسال</button>
+            </div>
+        </div>
+    </main>
+
+    <footer style="background: var(--dark); color: white; text-align: center; padding: 2rem 0; margin-top: 3rem;">
+        <div class="container">
+            <p>&copy; 2024 موقع الفري لان싱. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        const orderData = JSON.parse(localStorage.getItem('currentOrder'));
+        
+        if (orderData) {
+            document.getElementById('order-info').innerHTML = `
+                <strong>الطلب:</strong> ${orderData.serviceName} | 
+                <strong>رقم الطلب:</strong> ${orderData.orderId} |
+                <strong>الحالة:</strong> <span style="color: var(--warning);">قيد المراجعة</span>
+            `;
+        }
+
+        let messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+
+        function displayMessages() {
+            const messagesContainer = document.getElementById('chat-messages');
+            messagesContainer.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.sender}-message`;
+                messageDiv.innerHTML = `
+                    <div>${msg.text}</div>
+                    <div class="message-time">${formatTime(msg.timestamp)}</div>
+                `;
+                messagesContainer.appendChild(messageDiv);
+            });
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            
+            if (text) {
+                const message = {
+                    text: text,
+                    sender: 'customer',
+                    timestamp: new Date().toISOString()
+                };
+                
+                messages.push(message);
+                localStorage.setItem('chatMessages', JSON.stringify(messages));
+                
+                displayMessages();
+                input.value = '';
+                
+                setTimeout(simulateEditorReply, 2000);
+            }
+        }
+
+        function simulateEditorReply() {
+            const replies = [
+                "شكراً لطلبك، سأقوم بمراجعة التفاصيل والملفات المرفقة",
+                "هل يمكنك إرسال بعض الأمثلة للمراجع التي تريدها؟",
+                "سأبدأ في العمل وسيتم تسليم المشروع في الموعد المحدد",
+                "تم فهم المتطلبات، سأبدأ في التنفيذ فوراً",
+                "هل يمكنك توضيح بعض النقاط في الطلب؟"
+            ];
+            
+            const randomReply = replies[Math.floor(Math.random() * replies.length)];
+            
+            const message = {
+                text: randomReply,
+                sender: 'editor',
+                timestamp: new Date().toISOString()
+            };
+            
+            messages.push(message);
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            
+            displayMessages();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('ar-EG', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // محاكاة رفع الملفات
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const message = {
+                    text: `📎 تم إرفاق ${e.target.files.length} ملف`,
+                    sender: 'customer',
+                    timestamp: new Date().toISOString()
+                };
+                
+                messages.push(message);
+                localStorage.setItem('chatMessages', JSON.stringify(messages));
+                displayMessages();
+                
+                // محاكاة رد المحرر
+                setTimeout(() => {
+                    const reply = {
+                        text: "تم استلام الملفات، سأقوم بمراجعتها الآن",
+                        sender: 'editor',
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    messages.push(reply);
+                    localStorage.setItem('chatMessages', JSON.stringify(messages));
+                    displayMessages();
+                }, 1500);
+            }
+        });
+
+        displayMessages();
+
+        if (messages.length === 0) {
+            const welcomeMessage = {
+                text: "مرحباً بك! أنا محمد أحمد، المحرر المسؤول عن طلبك. كيف يمكنني مساعدتك؟",
+                sender: 'editor',
+                timestamp: new Date().toISOString()
+            };
+            messages.push(welcomeMessage);
+            localStorage.setItem('chatMessages', JSON.stringify(messages));
+            displayMessages();
+        }
+    </script>
+</body>
+</html>
